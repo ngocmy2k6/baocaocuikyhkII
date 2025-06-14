@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Đăng ký </title>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #e8e3e3;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      background-size: cover ;
+      background-position: center;
+      background-repeat: no-repeat;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .register-form {
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .register-form h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .register-form input[type="text"],
+    .register-form input[type="email"],
+    .register-form input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+
+    .register-form button {
+      width: 100%;
+      padding: 12px;
+      background:#141214;
+      color: rgb(18, 14, 14);
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .register-form button:hover {
+      background: #e8e4e4;
+    }
+
+    .error {
+      color: red;
+      font-size: 14px;
+    }
+    .options {
+      margin-top: 20px;
+      color:#141214;
+      text-align: center;
+      font-weight: 500;
+      gap: 100px;
+    }
+    .options a {
+      color: black;
+      text-decoration: none;
+    }
+    .options a :hover{
+      text-decoration: none;
+      
+
+    }.options :hover{
+      color: #a19999;
+      
+
+    }
+
+  
+
+  </style>
+</head>
+<body>
+   <video autoplay muted loop id="bg-video" style="position:fixed;top:0;left:0;width:100vw;height:100vh;object-fit:cover;z-index:-1;">
+    <source src="Classic Jewelry Animation for AGAPE Diamonds Part1.mp4" type="video/mp4">
+    Trình duyệt của bạn không hỗ trợ video.
+  </video>
+
+
+
+  <form class="register-form"  id="Dangky">
+    <h2>Đăng ký thành viên</h2>
+    <input type="text" id="tendangnhap" placeholder="Tên đăng nhập" required>
+    <input type="email" id="email" placeholder="Email" required>
+    <input type="password" id="matkhau" placeholder="Mật khẩu" required>
+    <input type="password" id="nhaplaimatkhau" placeholder="Xác nhận mật khẩu" required>
+    
+    <p class="error" id="errorMsg"></p>
+
+    <button style= color:white  type="submit"> Đăng ký</button>
+    <div class="options"> 
+    <a href="dangnhap.html"> Bạn đã có tài khoản? </a><a href="admin.html"> Bạn là admin? </a></div>
+  </form>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.43.2/+esm'
+  
+    const supabase = createClient(
+      'https://yjjlpjnifvyxewrepnfk.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlqamxwam5pZnZ5eGV3cmVwbmZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg2NzMxMzUsImV4cCI6MjA2NDI0OTEzNX0.W9I4r-uDpAJj2jtctfzEqy6Uf3eifR11rXjX15see0w'
+    );
+  
+    document.getElementById('Dangky').addEventListener('submit', async (e) => {
+      e.preventDefault();
+  
+     const tendangnhap = document.getElementById('tendangnhap').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const matkhau = document.getElementById('matkhau').value;
+  const nhaplaimatkhau = document.getElementById("nhaplaimatkhau").value;
+  const errorMsg = document.getElementById("errorMsg");
+
+  errorMsg.textContent = ""; // Clear previous error
+
+  // Kiểm tra hợp lệ trước khi đăng ký
+  if (matkhau !== nhaplaimatkhau) {
+    errorMsg.textContent = "Mật khẩu không khớp!";
+    return;
+  }
+  if (!/^[a-zA-Z0-9_]+$/.test(tendangnhap)) {
+    errorMsg.textContent = "Tên đăng nhập chỉ được chứa chữ cái, số và dấu gạch dưới.";
+    return;
+  }
+  if (matkhau.length < 6) {
+    errorMsg.textContent = "Mật khẩu phải có ít nhất 6 ký tự.";
+    return;
+  }
+
+  // Đăng ký với Supabase Auth
+  const { data: authData, error: authError } = await supabase.auth.signUp({
+    email: email,
+    password: matkhau
+  });
+
+  if (authError) {
+    if (authError.message.toLowerCase().includes("already registered")) {
+      errorMsg.textContent = "Email này đã được đăng ký. Vui lòng dùng email khác!";
+    } else {
+      errorMsg.textContent = "Lỗi đăng ký: " + authError.message;
+    }
+    return;
+  }
+
+  // Lưu thêm vào bảng Dangky (nếu muốn)
+  const { error: insertError } = await supabase.from('Dangky').insert([
+    { tendangnhap, email, matkhau }
+  ]);
+
+  if (insertError) {
+    errorMsg.textContent = "Đăng ký thất bại: " + insertError.message;
+  } else {
+    errorMsg.style.color = "green";
+    errorMsg.textContent = "Đăng ký thành công! Vui lòng kiểm tra email để xác nhận.";
+    document.getElementById('Dangky').reset();
+   setTimeout(() => {
+    window.location.href = "dangnhap.html";
+  }, 0); // ví du 1.5 giây thì đổi lại
+}
+  
+});
+</script>
+
+</body>
+</html>

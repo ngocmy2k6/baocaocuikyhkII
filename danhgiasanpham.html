@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đánh giá sản phẩm</title>
+  <link rel="stylesheet" href="trangcanhan.css">
+  <style>
+    .star-rating {
+      direction: rtl;
+      display: inline-flex;
+      font-size: 2rem;
+      user-select: none;
+    }
+    .star-rating input[type="radio"] {
+      display: none;
+    }
+    .star-rating label {
+      color: #ccc;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .star-rating input[type="radio"]:checked ~ label,
+    .star-rating label:hover,
+    .star-rating label:hover ~ label {
+      color: #FFD700;
+    }
+   .review-box {
+  background: rgba(255,255,255,0.9);
+  padding: 30px;
+  border-radius: 18px; /* tăng độ bo tròn */
+  max-width: 500px;
+  margin: 40px auto;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.review-box textarea,
+.review-box input[type="text"] {
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  padding: 8px 12px;
+  margin-top: 6px;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 1rem;
+  outline: none;
+  transition: border 0.2s;
+}
+.review-box textarea:focus,
+.review-box input[type="text"]:focus {
+  border: 1.5px solid #FFD700;
+}
+    .review-sample {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  padding: 18px 20px 12px 20px;
+  margin-bottom: 18px;
+  border: 1px solid #f2f2f2;
+  transition: box-shadow 0.2s;
+}
+.review-sample:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+}
+.review-sample strong {
+  font-size: 1.1rem;
+}
+.review-sample small {
+  color: #888;
+  display: block;
+  margin-top: 6px;
+}
+  </style>
+</head>
+<body>
+
+   <video src="Classic Jewelry Animation for AGAPE Diamonds Part2.mp4" alt="Back-end" style="position:fixed;top:0;left:0;width:100vw;height:100vh;object-fit:cover;z-index:-1;" autoplay muted loop></video>
+  <div class="account-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <h3>Xin chào, Quế Thơ</h3>
+      <h3><a href="index.html" style="user-select: none; text-decoration: none; color:black">Home</a></h3>
+      <ul class="menu">
+        
+        <li><a href="trangcanhan.html">Hồ sơ</a></li>
+        <li><a href="doimatkhau.html">Đổi mật khẩu</a></li>
+        <li><a href="donhang.html">Đơn hàng của tôi</a></li>
+        <li class="active">Đánh giá sản phẩm</li>
+        <li><a href="voucher.html">Voucher</a></li>
+        <li><a href="trungtamhotro.html">Trung tâm hỗ trợ</a></li>
+        <li><a href="#" id="logout-btn">Đăng xuất</a></li>
+      </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="content">
+      <h2>Đánh giá sản phẩm</h2>
+      <div class="review-box">
+        <form>
+          <label>Tên sản phẩm
+            <input type="text" placeholder="Nhập tên sản phẩm" required>
+          </label>
+          <br><br>
+          <label>Đánh giá của bạn</label>
+          <div class="star-rating">
+            <input type="radio" id="star5" name="rating" value="5" required><label for="star5">&#9733;</label>
+            <input type="radio" id="star4" name="rating" value="4"><label for="star4">&#9733;</label>
+            <input type="radio" id="star3" name="rating" value="3"><label for="star3">&#9733;</label>
+            <input type="radio" id="star2" name="rating" value="2"><label for="star2">&#9733;</label>
+            <input type="radio" id="star1" name="rating" value="1"><label for="star1">&#9733;</label>
+          </div>
+          <br><br>
+          <label>Nhận xét
+            <textarea rows="4" placeholder="Nhập nhận xét của bạn" required></textarea>
+          </label>
+          <br>
+          <button type="submit" class="btn-save">Gửi đánh giá</button>
+        </form>
+        </form>
+
+        <!-- Đánh giá mẫu -->
+        <div style="margin-top:40px;">
+  <h3>Đánh giá gần đây</h3>
+  <div class="review-sample">
+    <strong>Nhẫn vàng 18K</strong><br>
+    <span style="color:#FFD700;">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+    <div>Rất đẹp, sáng bóng và sang trọng. Tôi rất hài lòng!</div>
+    <small>Ngọc Anh - 01/06/2025</small>
+  </div>
+  <div class="review-sample">
+    <strong>Dây chuyền bạc Ý</strong><br>
+    <span style="color:#FFD700;">&#9733;&#9733;&#9733;&#9733;&#9734;</span>
+    <div>Sản phẩm tinh xảo, giao hàng nhanh. Sẽ ủng hộ tiếp!</div>
+    <small>Minh Thư - 28/05/2025</small>
+  </div>
+  <div class="review-sample">
+    <strong>Bông tai ngọc trai</strong><br>
+    <span style="color:#FFD700;">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+    <div>Bông tai rất xinh, phù hợp đi tiệc. Đóng gói cẩn thận.</div>
+    <small>Hồng Nhung - 20/05/2025</small>
+  </div>
+  <div class="review-sample">
+    <strong>Lắc tay đá quý</strong><br>
+    <span style="color:#FFD700;">&#9733;&#9733;&#9733;&#9734;&#9734;</span>
+    <div>Màu đá đẹp, nhưng dây hơi nhỏ so với tay mình.</div>
+    <small>Quốc Bảo - 15/05/2025</small>
+  </div>
+</div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.43.2/+esm'
+
+const supabase = createClient(
+  'https://yjjlpjnifvyxewrepnfk.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlqamxwam5pZnZ5eGV3cmVwbmZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg2NzMxMzUsImV4cCI6MjA2NDI0OTEzNX0.W9I4r-uDpAJj2jtctfzEqy6Uf3eifR11rXjX15see0w'
+);
+
+async function loadProfile() {
+  const userId = localStorage.getItem('trangcanhan');
+  console.log('userId:', userId);
+
+  if (userId) {
+    const { data, error } = await supabase
+      .from('Dangky')
+      .select('tendangnhap, email')
+      .eq('id', userId)
+      .single();
+
+    console.log('data:', data, 'error:', error);
+
+    if (data && data.tendangnhap) {
+      document.querySelector('.sidebar h3').textContent = 'Xin chào, ' + data.tendangnhap;
+      const emailInput = document.querySelector('input[type="email"]');
+      if (emailInput) emailInput.value = data.email || '';
+    }
+  }
+}
+
+loadProfile(); // đừng quên gọi hàm
+</script>
+  <script src="logout.js"></script>
+</body>
+</html>

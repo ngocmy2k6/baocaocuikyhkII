@@ -1,0 +1,44 @@
+.overlay {
+    background-color: rgba(255, 255, 255, 0.9); /* độ mờ của box */
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .overlay h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .overlay input[type="text"],
+  .overlay input[type="email"],
+  .overlay input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+
+  .overlay button {
+    width: 100%;
+    padding: 12px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .overlay button:hover {
+    background: #45a049;
+  }
+
+  .error {
+    color: red;
+    font-size: 14px;
+  }
+  

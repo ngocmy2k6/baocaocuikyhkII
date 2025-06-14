@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - Quản lý sản phẩm</title>
+  <link rel="stylesheet" href="trangcanhan.css">
+  <style>
+      body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #e8e3e3;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+   
+    .register-form h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    
+    .register-form input[type="email"],
+    .register-form input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+
+    .register-form button {
+      width: 100%;
+      padding: 12px;
+      background:#141214;
+      color: rgb(237, 237, 237);
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .register-form button:hover {
+      background: #a19999;
+    }
+
+    .error {
+      color: red;
+      font-size: 14px;
+    }
+    .options {
+      margin-top: 20px;
+      color:#141214;
+      text-align: center;
+      font-weight: 500;
+    }
+    .options a {
+      color: black;
+      text-decoration: none;
+    }
+    .options a :hover{
+      text-decoration: none;
+
+    }
+
+  
+
+    .admin-container  { width: max-content; margin: 40px ; background: #fff; padding: 32px; border-radius: 8px; }
+    .admin-container .child{ display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 24px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+    th { background: #eee; }
+    .hidden { display: none; }
+    img.product-img { width: 60px; height: 60px; object-fit: cover; border-radius: 6px; margin: 2px; }
+  </style>
+</head>
+<body>
+  <div class="register-form">
+    <h2>Đăng nhập Admin</h2>
+    <form id="admin-login-form">
+      <input type="email" id="admin-email" placeholder="Email admin" required>
+      <input type="password" id="admin-password" placeholder="Mật khẩu" required>
+      <button type="submit">Đăng nhập</button>
+      <p id="admin-login-msg" style="color:red;"></p>
+    </form>
+
+    <div class="admin-container hidden" id="admin-panel" >
+      <h3><a href="index.html" style="user-select: none;">home</a></h3>
+      <h2>Quản lý sản phẩm</h2>
+      <form id="add-product-form" style="margin-bottom:20px;" class="child">
+        <input type="text" id="product-name" placeholder="Tên sản phẩm" required>
+        <input type="number" id="product-price" placeholder="Giá" required>
+        <input type="file" id="product-image" accept="image/*" multiple required>
+        <button type="submit">Thêm sản phẩm</button>
+      </form>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Ảnh</th>
+            <th>Tên sản phẩm</th>
+            <th>Giá</th>
+            <th>Xóa</th>
+          </tr>
+        </thead>
+        <tbody id="product-list"></tbody>
+      </table>
+      <button id="admin-logout" style="margin-top:20px;">Đăng xuất</button>
+    </div>
+  </div>
+   <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.43.2/+esm'
+    const supabase = createClient(
+      'https://yjjlpjnifvyxewrepnfk.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlqamxwam5pZnZ5eGV3cmVwbmZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg2NzMxMzUsImV4cCI6MjA2NDI0OTEzNX0.W9I4r-uDpAJj2jtctfzEqy6Uf3eifR11rXjX15see0w'
+    );
+
+    const ADMIN_EMAIL = "quetho1906@gmail.com";
+
+    // Đăng nhập admin
+    document.getElementById("admin-login-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("admin-email").value.trim();
+      const password = document.getElementById("admin-password").value;
+      const msg = document.getElementById("admin-login-msg");
+      msg.textContent = "";
+
+      if (email !== ADMIN_EMAIL) {
+        msg.textContent = "Chỉ tài khoản admin được phép đăng nhập!";
+        return;
+      }
+
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        msg.textContent = "Sai email hoặc mật khẩu!";
+        return;
+      }
+      document.getElementById("admin-login-form").classList.add("hidden");
+      document.getElementById("admin-panel").classList.remove("hidden");
+      loadProducts();
+    });
+
+    // Đăng xuất admin
+    document.getElementById("admin-logout").onclick = async () => {
+      await supabase.auth.signOut();
+      document.getElementById("admin-panel").classList.add("hidden");
+      document.getElementById("admin-login-form").classList.remove("hidden");
+    };
+
+    // Thêm sản phẩm với nhiều ảnh
+    document.getElementById("add-product-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = document.getElementById("product-name").value.trim();
+      const price = Number(document.getElementById("product-price").value);
+      const fileInput = document.getElementById("product-image");
+      const files = fileInput.files;
+      if (!name || !price || !files.length) return;
+
+      let imageUrls = [];
+      for (let file of files) {
+        const filePath = `${Date.now()}_${Math.random().toString(36).slice(2)}_${file.name}`;
+        let { data: uploadData, error: uploadError } = await supabase.storage
+          .from('product-images')
+          .upload(filePath, file);
+
+        if (uploadError) {
+          alert("Lỗi upload ảnh: " + uploadError.message);
+          return;
+        }
+
+        const { data: urlData } = supabase
+          .storage
+          .from('product-images')
+          .getPublicUrl(filePath);
+
+        let publicUrl = urlData.publicUrl;
+        if (!publicUrl.includes('/public/')) {
+          publicUrl = publicUrl.replace('/object/', '/object/public/');
+        }
+        imageUrls.push(publicUrl);
+      }
+
+      // Lưu sản phẩm vào bảng Sanpham với mảng link ảnh
+      const { error: insertError } = await supabase.from("Sanpham").insert([
+        { ten: name, gia: price, hinhanh: imageUrls }
+      ]);
+      if (insertError) {
+        alert("Lỗi lưu sản phẩm: " + insertError.message);
+        return;
+      }
+      document.getElementById("product-name").value = "";
+      document.getElementById("product-price").value = "";
+      fileInput.value = "";
+      loadProducts();
+    });
+//xoa
+ async function deleteProduct(id) {
+  const { error } = await supabase
+    .from("Sanpham")
+    .update({ hienthi: true })
+    .eq("id", id);
+
+  if (!error) {
+    const row = document.querySelector(`#product-list tr[data-id="${id}"]`);
+    if (row) row.remove();
+  } else {
+    alert("Lỗi khi ẩn sản phẩm: " + error.message);
+  }
+}
+
+    // Hiển thị danh sách sản phẩm
+    async function loadProducts() {
+      const { data, error } = await supabase.from("Sanpham").select("*").order("id", { ascending: true });
+      const tbody = document.getElementById("product-list");
+      tbody.innerHTML = "";
+      if (data) {
+        data.forEach(sp => {
+          const tr = document.createElement("tr");
+          tr.setAttribute("data-id", sp.id);
+          tr.innerHTML = `
+            <td>${sp.id}</td>
+            <td>
+              ${
+                Array.isArray(sp.hinhanh)
+                  ? sp.hinhanh.map(url => `<img src="${url}" class="product-img">`).join('')
+                  : (sp.hinhanh ? `<img src="${sp.hinhanh}" class="product-img">` : "")
+              }
+            </td>
+            <td>${sp.ten}</td>
+            <td>${sp.gia}</td>
+            <td><button onclick="deleteProduct(${sp.id})">Xóa</button></td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+    }
+    window.deleteProduct = deleteProduct;
+  </script>
+</body>
+</html>

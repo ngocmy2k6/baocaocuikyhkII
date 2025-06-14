@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Đơn hàng của tôi</title>
+  <link rel="stylesheet" href="trangcanhan.css">
+  <style>
+   
+    .account-container { display: flex; max-width: 1200px; margin: 40px auto; }
+    .sidebar { width: 220px; background: #fff; border-radius: 8px; margin-right: 32px; padding: 24px 0 24px 0; }
+    .sidebar h3 { text-align: center; margin-bottom: 18px; }
+    .menu { list-style: none; padding: 0; margin: 0; }
+    .menu li { padding: 12px 32px; border-bottom: 1px solid #eee; }
+    .menu li.active, .menu li:hover { background: #f5f5f5; font-weight: bold; }
+    .menu a { color: #333; text-decoration: none; display: block; }
+    .order-container { flex: 1; background: #fff; padding: 32px; border-radius: 8px; }
+    h2 { margin-bottom: 24px; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+    th { background: #eee; }
+    img.product-img { width: 60px; height: 60px; object-fit: cover; border-radius: 6px; }
+    .btn-buy { background: #ff96f1; color: #fff; border: none; padding: 10px 24px; border-radius: 6px; cursor: pointer; font-size: 16px; }
+    .btn-buy:disabled { background: #ccc; cursor: not-allowed; }
+    .order-message { color: green; font-weight: bold; margin-bottom: 16px; }
+    .order-history { margin-top: 32px; }
+    .order-history h3 { margin-bottom: 12px; }
+    .order-block { border: 1px solid #ccc; border-radius: 6px; padding: 12px; margin-bottom: 16px; background: #fafafa; }
+    .order-block ul { margin: 0; padding-left: 18px; }
+    .order-block li { margin-bottom: 4px; }
+  </style>
+</head>
+<body>
+   <video src="Classic Jewelry Animation for AGAPE Diamonds Part2.mp4" alt="Back-end" style="position:fixed;top:0;left:0;width:100vw;height:100vh;object-fit:cover;z-index:-1;" autoplay muted loop></video>
+  <div class="account-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <h3>Xin chào, Quế Thơ</h3>
+      <h3><a href="index.html" style="user-select: none; text-decoration: none; color:black">Home</a></h3>
+      <ul class="menu">
+        
+        <li><a href="trangcanhan.html">Hồ sơ</a></li>
+        <li><a href="doimatkhau.html">Đổi mật khẩu</a></li> 
+        <li class="active">Đơn hàng của tôi</li>
+        <li><a href="danhgiasanpham.html">Đánh giá sản phẩm</a></li>
+        <li><a href="voucher.html">Voucher</a></li>
+        <li><a href="trungtamhotro.html">Trung tâm hỗ trợ</a></li>
+        <li><a href="#" id="logout-btn">Đăng xuất</a></li>
+      </ul>
+    </aside>
+    <!-- Main Content -->
+    <div class="order-container">
+      <h2>Đơn hàng của tôi</h2>
+      <div id="order-list"></div>
+      <button id="checkout-btn" class="btn-buy">Mua hàng</button>
+      <div id="order-message" class="order-message"></div>
+      <div id="order-history" class="order-history"></div>
+    </div>
+  </div>
+ <script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.43.2/+esm'
+const supabase = createClient(
+  'https://yjjlpjnifvyxewrepnfk.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlqamxwam5pZnZ5eGV3cmVwbmZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg2NzMxMzUsImV4cCI6MjA2NDI0OTEzNX0.W9I4r-uDpAJj2jtctfzEqy6Uf3eifR11rXjX15see0w'
+);
+
+let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+let products = [];
+
+async function loadCart() {
+  if (cart.length === 0) {
+    document.getElementById('order-list').innerHTML = '<p>Giỏ hàng trống!</p>';
+    document.getElementById('checkout-btn').disabled = true;
+    return;
+  }
+  document.getElementById('checkout-btn').disabled = false;
+  // Lấy thông tin sản phẩm từ Supabase
+  const ids = cart.map(item => item.id);
+  const { data } = await supabase.from('Sanpham').select('*').in('id', ids);
+  products = data || [];
+  let html = '<table><tr><th>Ảnh</th><th>Tên</th><th>Giá</th><th>Số lượng</th></tr>';
+  cart.forEach(item => {
+    const sp = products.find(p => p.id === item.id);
+    if (sp) {
+      let img = Array.isArray(sp.hinhanh) ? sp.hinhanh[0] : sp.hinhanh;
+      html += `<tr>
+        <td><img src="${img}" class="product-img"></td>
+        <td>${sp.ten}</td>
+        <td>${sp.gia}</td>
+        <td>${item.qty}</td>
+      </tr>`;
+    }
+  });
+  html += '</table>';
+  document.getElementById('order-list').innerHTML = html;
+}
+loadCart();
+
+// Xử lý mua hàng
+document.getElementById('checkout-btn').onclick = async () => {
+  if (cart.length === 0) return;
+  const userId = localStorage.getItem('trangcanhan');
+  if (!userId) {
+    alert('Bạn cần đăng nhập để mua hàng!');
+    return;
+  }
+  // Tạo đơn hàng
+  const { error } = await supabase.from('Donhang').insert([{
+    user_id: userId,
+    items: cart,
+    created_at: new Date().toISOString()
+  }]);
+  if (!error) {
+    document.getElementById('order-message').textContent = 'Đã mua hàng thành công!';
+    localStorage.removeItem('cart');
+    cart = [];
+    loadCart();
+    loadOrderHistory();
+  } else {
+    document.getElementById('order-message').textContent = 'Có lỗi khi mua hàng!';
+  }
+};
+
+// Hiển thị lịch sử đơn hàng
+async function loadOrderHistory() {
+  const userId = localStorage.getItem('trangcanhan');
+  if (!userId) return;
+  const { data } = await supabase.from('Donhang').select('*').eq('user_id', userId).order('created_at', { ascending: false });
+  let html = '<h3>Lịch sử đơn hàng</h3>';
+  if (!data || data.length === 0) {
+    html += '<p>Chưa có đơn hàng nào.</p>';
+  } else {
+    data.forEach(order => {
+      html += `<div class="order-block">
+        <div><b>Ngày mua:</b> ${new Date(order.created_at).toLocaleString()}</div>
+        <ul>
+          ${order.items.map(item => {
+            const sp = products.find(p => p.id === item.id) || {};
+            let img = sp.hinhanh
+? (Array.isArray(sp.hinhanh) ? sp.hinhanh[0] : sp.hinhanh)
+          : '';
+            return `<li>
+          ${img ? `<img src="${img}" style="width:40px;height:40px;object-fit:cover;border-radius:5px;margin-right:8px;vertical-align:middle;">` : ''}
+          ${sp.ten || 'Sản phẩm'} - SL: ${item.qty}
+        </li>`;
+      }).join('')}
+        </ul>
+      </div>`;
+    });
+  }
+  document.getElementById('order-history').innerHTML = html;
+}
+loadOrderHistory();
+  </script>
+  <script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.43.2/+esm'
+
+const supabase1 = createClient(
+  'https://yjjlpjnifvyxewrepnfk.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlqamxwam5pZnZ5eGV3cmVwbmZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg2NzMxMzUsImV4cCI6MjA2NDI0OTEzNX0.W9I4r-uDpAJj2jtctfzEqy6Uf3eifR11rXjX15see0w'
+);
+
+async function loadProfile() {
+  const userId = localStorage.getItem('trangcanhan');
+  console.log('userId:', userId);
+
+  if (userId) {
+    const { data, error } = await supabase1
+      .from('Dangky')
+      .select('tendangnhap, email')
+      .eq('id', userId)
+      .single();
+
+    console.log('data:', data, 'error:', error);
+
+    if (data && data.tendangnhap) {
+      document.querySelector('.sidebar h3').textContent = 'Xin chào, ' + data.tendangnhap;
+      const emailInput = document.querySelector('input[type="email"]');
+      if (emailInput) emailInput.value = data.email || '';
+    }
+  }
+}
+
+loadProfile(); // đừng quên gọi hàm
+</script>
+  <script src="logout.js"></script>
+</body>
+</html>

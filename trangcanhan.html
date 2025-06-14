@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <title>Trang cá nhân</title>
+  <link rel="stylesheet" href="trangcanhan.css">
+</head>
+
+  
+    <body>
+   <video src="Classic Jewelry Animation for AGAPE Diamonds Part2.mp4" alt="Back-end" style="position:fixed;top:0;left:0;width:100vw;height:100vh;object-fit:cover;z-index:-1;" autoplay muted loop></video>
+  <div class="account-container">
+    <!-- ...existing code... -->
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <h3>Xin chào, Quế Thơ</h3>
+      <h3><a href="index.html" style="user-select: none; text-decoration: none; color:black">Home</a></h3>
+      <ul class="menu">
+        
+        <li class="active"> Hồ sơ</li>
+        <li> <a href=doimatkhau.html>Đổi mật khẩu</a></li> 
+        <li><a href=donhang.html>Đơn hàng của tôi</a></li>
+       <li><a href="danhgiasanpham.html">Đánh giá sản phẩm</a></li>
+        <li><a href=voucher.html>Voucher</a></li>
+        <li><a href=trungtamhotro.html>Trung tâm hỗ trợ</a></li>
+        
+       <li><a href="#" id="logout-btn">Đăng xuất</a></li></ul>
+       
+    </aside>
+
+    <!-- Main Content -->
+    <main class="content">
+      <h2>Hồ sơ</h2>
+      <div class="profile-box">
+        <!-- Avatar -->
+        <div class="avatar-section">
+          <img id="avatar" src="https://i.pravatar.cc/120" alt="avatar">
+          <input type="file" id="avatar-input" hidden>
+          <label for="avatar-input" class="btn-outline">Chọn ảnh đại diện</label>
+        </div>
+
+        <!-- Form -->
+        <div class="form-section">
+          <label>Họ và tên <span>*</span>
+            <input type="text" id="hovaten" placeholder="Nhập họ tên">
+          </label>
+
+          <label>Email <span>*</span>
+            <input type="email" id="email" placeholder="Nhập email" disabled>
+          </label>
+
+          <label>Số điện thoại <span>*</span>
+            <input type="text" id="sodienthoai" value="0977605472">
+          </label>
+          <label>Địa chỉ <span>*</span>
+  <input type="text" id="diachi" placeholder="Nhập địa chỉ">
+</label>
+
+          <label>Giới tính
+            <select id="gioitinh">
+              <option>Giới tính</option>
+              <option value="true">Nam</option>
+              <option value="false">Nữ</option>
+              <option value="other">Khác</option>
+            </select>
+          </label>
+
+                  <div class="dob-select">
+            <select id="ngay">
+              <option value="">Ngày sinh</option>
+             
+            </select>
+            <select id="thang">
+              <option value="">Tháng sinh</option>
+            
+            </select>
+            <select id="nam">
+              <option value="">Năm sinh</option>
+              
+            </select>
+          </div >
+          
+          <button class="btn-save" >Lưu thông tin</button> 
+        
+        </div>
+        <input type="text" id="otp-input" placeholder="Nhập mã xác nhận OTP" style="display:none;margin-top:10px;">
+<button id="otp-confirm-btn" style="display:none;">Xác nhận OTP</button>
+<p id="otp-message" style="color:red;"></p>
+      </div>
+    </main>
+  </div>
+  <script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.43.2/+esm'
+
+const supabase = createClient(
+  'https://yjjlpjnifvyxewrepnfk.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlqamxwam5pZnZ5eGV3cmVwbmZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg2NzMxMzUsImV4cCI6MjA2NDI0OTEzNX0.W9I4r-uDpAJj2jtctfzEqy6Uf3eifR11rXjX15see0w'
+);
+
+let avatarUrl = "";
+let userEmail = "";
+
+document.addEventListener("DOMContentLoaded", function() {
+
+  document.getElementById('avatar-input').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const userId = localStorage.getItem('trangcanhan');
+  const fileExt = file.name.split('.').pop();
+  const filePath = `avatars/${userId}.${fileExt}`;
+  // Upload lên Supabase Storage
+  let { error: uploadError } = await supabase.storage
+    .from('avatars')
+    .upload(filePath, file, { upsert: true });
+  if (uploadError) {
+    alert('Lỗi upload ảnh: ' + uploadError.message);
+    return;
+  }
+  // Lấy link public
+  const { data } = supabase.storage.from('avatars').getPublicUrl(filePath);
+  avatarUrl = data.publicUrl;
+  document.getElementById('avatar').src = avatarUrl;
+});
+  // Ngày
+  const ngaySelect = document.getElementById('ngay');
+  for (let i = 1; i <= 31; i++) {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = i;
+    ngaySelect.appendChild(opt);
+  }
+
+  // Tháng
+  const thangSelect = document.getElementById('thang');
+  for (let i = 1; i <= 12; i++) {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = i;
+    thangSelect.appendChild(opt);
+  }
+
+  // Năm 
+  const namSelect = document.getElementById('nam');
+  const yearNow = new Date().getFullYear();
+  for (let i = yearNow; i >= 1950; i--) {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = i;
+    namSelect.appendChild(opt);
+  }
+  loadProfile();
+  document.querySelector('.btn-save').addEventListener('click', saveProfile);
+
+
+});
+
+async function loadProfile() {
+  
+   // Hiển thị tên đăng nhập và email
+  const userId = localStorage.getItem('trangcanhan');
+  console.log('userId:', userId);
+  if (userId) {
+    const { data, error } = await supabase
+      .from('Dangky')
+      .select('tendangnhap, email')
+      .eq('id', userId)
+      .single();
+    console.log('data:', data, 'error:', error);
+    if (data && data.tendangnhap) {
+      document.querySelector('.sidebar h3').textContent = 'Xin chào, ' + data.tendangnhap;
+      const emailInput = document.querySelector('input[type="email"]');
+      if (emailInput) emailInput.value = data.email || '';
+    } 
+ }
+ const { data: profile, error: profileError } = await supabase
+    .from('trangcanhan')
+    .select('*')
+    .eq('id', userId)
+    .single();
+  if (profile) {
+    document.getElementById('hovaten').value = profile.hovaten || '';
+    document.getElementById('sodienthoai').value = profile.sodienthoai || '';
+    document.getElementById('diachi').value = profile.diachi || '';
+    document.getElementById('avatar').src = profile.avatar || "https://i.pravatar.cc/120";
+    avatarUrl = profile.avatar || "";
+    // Giới tính
+    const gtSelect = document.getElementById('gioitinh');
+    if (gtSelect && profile.gioitinh) gtSelect.value = profile.gioitinh;
+    // Ngày sinh
+    if (profile.ngaysinh) {
+  const dateStr = profile.ngaysinh.split('T')[0];
+  const [nam, thang, ngay] = dateStr.split('-');
+  document.getElementById('ngay').value = String(Number(ngay));
+  document.getElementById('thang').value = String(Number(thang));
+  document.getElementById('nam').value = nam;
+    }
+  }
+}
+
+async function saveProfile(e) {
+  e.preventDefault();
+  const userId = localStorage.getItem('trangcanhan');
+  const hovaten = document.getElementById('hovaten').value;
+  const sodienthoai = document.getElementById('sodienthoai').value;
+  const diachi = document.getElementById('diachi').value;
+  const gioitinh = document.getElementById('gioitinh').value;
+  const ngay = document.getElementById('ngay').value;
+  const thang = document.getElementById('thang').value;
+  const nam = document.getElementById('nam').value;
+  const ngaysinh = `${nam}-${thang.padStart(2, '0')}-${ngay.padStart(2, '0')}`;
+  let avatar = avatarUrl || document.getElementById('avatar').src;
+
+  const { error } = await supabase
+    .from('trangcanhan')
+    .upsert([{
+      id: userId,
+      hovaten,
+      sodienthoai,
+      diachi,
+      gioitinh,
+      ngaysinh,
+      avatar
+    }]);
+  if (error) {
+    console.log(error);
+    alert('Lưu thất bại: ' + error.message);
+  } else {
+    alert('Lưu thành công!');
+    loadProfile(); // reload lại thông tin mới
+  }
+
+}
+</script>
+ <script src="logout.js"></script>
+
+</body>
+</html>

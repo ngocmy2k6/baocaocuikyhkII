@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css" >
+<style>
+.card {
+  display: flex;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  max-width: auto;
+  margin: 40px auto;
+  
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.left-side {
+  display: flex;
+  width: 50%;
+  background-color: #f9f9f9;
+}
+
+.thumbnail-list {
+  width: 25%;
+  max-height: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px 5px;
+  background-color: #eee;
+}
+
+.thumbnail-list img {
+  width: 100%;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.thumbnail-list img:hover {
+  transform: scale(1.05);
+}
+
+.main-image {
+  width: 75%;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.main-image img {
+  width: 100%;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.card-content {
+  padding: 20px;
+  width: 50%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: top;
+}
+
+.card-content h1 {
+  margin-top: 0;
+}
+
+.price {
+  color: grey;
+  font-size: 24px;
+  margin: 10px 0;
+}
+
+.card-content button {
+  border: none;
+  outline: 0;
+  padding: 12px;
+  color: white;
+  background-color: #000;
+  text-align: center;
+  cursor: pointer;
+  font-size: 18px;
+  width: 100%;
+  margin-top: 20px;
+  border-radius: 5px;
+}
+
+.card-content button:hover {
+  opacity: 0.7;
+}
+.cart-icon {
+      position: absolute;
+      right: 20px;
+      top: 20px;
+      cursor: pointer;
+      font-size: 18px;
+     color: #eee;
+    }
+    .cart-count {
+      background: white;
+      color: #ff4081;
+      padding: 2px 6px;
+      border-radius: 50%;
+      font-size: 12px;
+      margin-left: 5px;
+    }
+</style>
+</head>
+<body>
+  <a href="donhang.html">
+    <div class="cart-icon" onclick="toggleCart()">
+      <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        fill-rule="evenodd"
+        clip-rule="evenodd"
+        d="M5.79166 2H1V4H4.2184L6.9872 16.6776H7V17H20V16.7519L22.1932 7.09095L22.5308 6H6.6552L6.08485 3.38852L5.79166 2ZM19.9869 8H7.092L8.62081 15H18.3978L19.9869 8Z"
+        fill="currentColor"
+      />
+      <path
+        d="M10 22C11.1046 22 12 21.1046 12 20C12 18.8954 11.1046 18 10 18C8.89543 18 8 18.8954 8 20C8 21.1046 8.89543 22 10 22Z"
+        fill="currentColor"
+      />
+      <path
+        d="M19 20C19 21.1046 18.1046 22 17 22C15.8954 22 15 21.1046 15 20C15 18.8954 15.8954 18 17 18C18.1046 18 19 18.8954 19 20Z"
+        fill="currentColor"
+      />
+    </svg> Cart <span class="cart-count" id="cart-count">0</span>
+          </div></a>
+    <nav style="background-color: #000" class="nav" >
+     <a href="index.html"><img src="Screenshot (2).png" alt="Logo" height="50"></a>
+    </nav>
+<div class="card">
+  <div class="left-side">
+    <div class="thumbnail-list">
+      <img src="Sliver Chain/b10.jpg" onclick="changeImage(this.src)" alt="Thumb 1">
+      <img src="Sliver Chain/b7.jpg" onclick="changeImage(this.src)" alt="Thumb 2">
+      <img src="Sliver Chain/b8.jpg" onclick="changeImage(this.src)" alt="Thumb 3">
+      <img src="Sliver Chain/b9.jpg" onclick="changeImage(this.src)" alt="Thumb 4">
+    </div>
+    <div class="main-image">
+      <img id="mainDisplay" src="Sliver Chain/b10.jpg" alt="Main Product">
+    </div>
+  </div>
+  <div class="card-content">
+    <h1>vòng cổ bạc</h1>
+    <p class="price">30tr/1chiec</p>
+    <p></p>
+    <button onclick="addToCart()" >Add to Cart</button>
+  </div>
+</div>
+
+<script>
+function changeImage(src) {
+  document.getElementById("mainDisplay").src = src;
+}
+</script>
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.43.2/+esm'
+const supabase = createClient(
+  'https://yjjlpjnifvyxewrepnfk.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlqamxwam5pZnZ5eGV3cmVwbmZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg2NzMxMzUsImV4cCI6MjA2NDI0OTEzNX0.W9I4r-uDpAJj2jtctfzEqy6Uf3eifR11rXjX15see0w'
+);
+
+// Lấy id sản phẩm từ URL
+const params = new URLSearchParams(window.location.search);
+const PRODUCT_ID = Number(params.get('id'));
+
+// Hiển thị số lượng giỏ hàng
+function updateCartCount() {
+  let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  let total = cart.reduce((sum, item) => sum + item.qty, 0);
+  document.getElementById("cart-count").textContent = total;
+}
+updateCartCount();
+
+// Lấy thông tin sản phẩm từ Supabase và hiển thị
+async function loadProduct() {
+  if (!PRODUCT_ID) {
+    alert('Không tìm thấy sản phẩm!');
+    return;
+  }
+  const { data: sp, error } = await supabase.from('Sanpham').select('*').eq('id', PRODUCT_ID).single();
+  if (!sp) {
+    alert('Không tìm thấy sản phẩm!');
+    return;
+  }
+  // Hiển thị tên, giá
+  document.getElementById('product-name').textContent = sp.ten;
+  document.getElementById('product-price').textContent = sp.gia + ' VNĐ';
+  // Hiển thị ảnh
+  let imgs = Array.isArray(sp.hinhanh) ? sp.hinhanh : [sp.hinhanh];
+  document.getElementById('mainDisplay').src = imgs[0];
+  // Thumbnail
+  document.getElementById('thumbnail-list').innerHTML = imgs.map(url => 
+    `<img src="${url}" onclick="changeImage('${url}')" alt="Thumb">`
+  ).join('');
+}
+window.changeImage = function(src) {
+  document.getElementById("mainDisplay").src = src;
+}
+loadProduct();
+
+// Thêm sản phẩm vào giỏ
+window.addToCart = function() {
+  let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  const found = cart.find(item => item.id === PRODUCT_ID);
+  if (found) {
+    found.qty += 1;
+  } else {
+    cart.push({ id: PRODUCT_ID, qty: 1 });
+  }
+  localStorage.setItem('cart', JSON.stringify(cart));
+  updateCartCount();
+  alert('Đã thêm vào giỏ hàng!');
+}
+
+// Chuyển sang trang đơn hàng khi click icon giỏ hàng
+window.goToCart = function() {
+  window.location.href = "donhang.html";
+}
+</script>
+
+</body>
+</html>

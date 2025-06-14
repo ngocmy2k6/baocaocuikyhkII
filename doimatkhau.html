@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đổi mật khẩu</title>
+  <link rel="stylesheet" href="trangcanhan.css">
+</head>
+<body>
+
+   <video src="Classic Jewelry Animation for AGAPE Diamonds Part2.mp4" alt="Back-end" style="position:fixed;top:0;left:0;width:100vw;height:100vh;object-fit:cover;z-index:-1;" autoplay muted loop></video>
+  <div class="account-container">
+    <aside class="sidebar">
+      <h3>Xin chào, Quế Thơ</h3>
+      <h3><a href="index.html" style="user-select: none; text-decoration: none; color:black">Home</a></h3>
+      <ul class="menu">
+      
+        <li><a href="trangcanhan.html">Hồ sơ</a></li>
+        <li class="active">Đổi mật khẩu</li>
+        <li><a href="donhang.html">Đơn hàng của tôi</a></li>
+        <li><a href="danhgiasanpham.html">Đánh giá sản phẩm</a></li>
+         <li><a href="voucher.html">Voucher</a></li>
+        <li><a href="trungtamhotro.html">Trung tâm hỗ trợ</a></li>
+<li><a href="#" id="logout-btn">Đăng xuất</a></li>      </ul>
+    </aside>
+
+    <main class="content">
+      <h2>Đổi mật khẩu</h2>
+      <form id="change-password-form" class="profile-box">
+        <div class="form-section">
+          <label>Mật khẩu hiện tại <span>*</span>
+            <input type="password" id="current-password" required>
+          </label>
+          <label>Mật khẩu mới <span>*</span>
+            <input type="password" id="new-password" required>
+          </label>
+          <label>Xác nhận mật khẩu mới <span>*</span>
+            <input type="password" id="confirm-password" required>
+          </label>
+          <button type="submit" class="btn-save">Đổi mật khẩu</button>
+        </div>
+        <div id="message" style="color:red;margin-top:10px;"></div>
+         
+      </form>
+    </main>
+  </div>
+
+
+ <script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.43.2/+esm'
+
+const supabase = createClient(
+      'https://yjjlpjnifvyxewrepnfk.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlqamxwam5pZnZ5eGV3cmVwbmZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg2NzMxMzUsImV4cCI6MjA2NDI0OTEzNX0.W9I4r-uDpAJj2jtctfzEqy6Uf3eifR11rXjX15see0w'
+);
+const userId = localStorage.getItem('trangcanhan');
+  console.log('userId:', userId);
+
+  if (userId) {
+    const { data, error } = await supabase
+      .from('Dangky')
+      .select('tendangnhap')
+      .eq('id', userId)
+      .single();
+
+    console.log('data:', data, 'error:', error);
+
+    if (data && data.tendangnhap) {
+      document.querySelector('.sidebar h3').textContent = 'Xin chào, ' + data.tendangnhap;
+     
+    }
+  }
+
+document.getElementById("change-password-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const currentPassword = document.getElementById("current-password").value;
+  const newPassword = document.getElementById("new-password").value;
+  const confirmPassword = document.getElementById("confirm-password").value;
+  const msg = document.getElementById("message");
+  msg.textContent = "";
+
+  if (newPassword !== confirmPassword) {
+    msg.textContent = "Mật khẩu xác nhận không khớp!";
+    msg.style.color = "red";
+    return;
+  }
+
+  // Lấy id người dùng từ localStorage (hoặc session)
+  const userId = localStorage.getItem('trangcanhan');
+  if (!userId) {
+    msg.textContent = "Không xác định được người dùng!";
+    return;
+  }
+
+  // Kiểm tra mật khẩu hiện tại
+  const { data, error } = await supabase
+    .from("Dangky")
+    .select("matkhau")
+    .eq("id", userId)
+    .single();
+
+  if (error || !data || data.matkhau !== currentPassword) {
+    msg.textContent = "Mật khẩu hiện tại không đúng!";
+    msg.style.color = "red";
+    return;
+  }
+
+  // Cập nhật mật khẩu mới
+  const { error: updateError } = await supabase
+    .from("Dangky")
+    .update({ matkhau: newPassword })
+    .eq("id", userId);
+
+  if (updateError) {
+    msg.textContent = "Đổi mật khẩu thất bại: " + updateError.message;
+    msg.style.color = "red";
+  } else {
+    msg.textContent = "Đổi mật khẩu thành công!";
+    msg.style.color = "green";
+  }
+});
+
+
+  </script>
+  <script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.43.2/+esm'
+
+const supabase1 = createClient(
+  'https://yjjlpjnifvyxewrepnfk.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlqamxwam5pZnZ5eGV3cmVwbmZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg2NzMxMzUsImV4cCI6MjA2NDI0OTEzNX0.W9I4r-uDpAJj2jtctfzEqy6Uf3eifR11rXjX15see0w'
+);
+
+async function loadProfile() {
+  const userId = localStorage.getItem('trangcanhan');
+  console.log('userId:', userId);
+
+  if (userId) {
+    const { data, error } = await supabase1
+      .from('Dangky')
+      .select('tendangnhap, email')
+      .eq('id', userId)
+      .single();
+
+    console.log('data:', data, 'error:', error);
+
+    if (data && data.tendangnhap) {
+      document.querySelector('.sidebar h3').textContent = 'Xin chào, ' + data.tendangnhap;
+      const emailInput = document.querySelector('input[type="email"]');
+      if (emailInput) emailInput.value = data.email || '';
+    }
+  }
+}
+
+loadProfile(); // đừng quên gọi hàm
+</script>
+  <script src="logout.js"></script>
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="login.css">
+  <title>Đăng nhập</title>
+</head>
+<body class="login-body">
+   <video autoplay muted loop id="bg-video" style="position:fixed;top:0;left:0;width:100vw;height:100vh;object-fit:cover;z-index:-1;">
+    <source src="/Classic Jewelry Animation for AGAPE Diamonds Part1.mp4" type="video/mp4">
+    Trình duyệt của bạn không hỗ trợ video.
+  </video>
+
+
+  <div class="login-container">
+    <h2>Đăng nhập</h2>
+    <p>Đăng nhập để khám phá thế giới trang sức sang trọng</p>
+    <form class="login-form" id="dangnhap">
+      <input type="text" placeholder="Tên đăng nhập" id="tendangnhap" required>
+      <input type="password" placeholder="Mật khẩu" id="password" required>
+      <button type="submit">Đăng Nhập</button>
+      <p id="errorMsg" style="color:red; font-size: 14px; margin-top: 10px;"></p>
+      <div class="options">
+      
+        <a href="Dangky.html">Đăng ký</a>
+        <a href="#" id="forgot-link" style="color:rgb(0, 0, 0); text-decoration:none ;">Quên tài khoản?</a>
+</div>
+</form>
+
+<!-- Đặt form quên mật khẩu ở ngoài form đăng nhập -->
+<div id="forgot-form-container" style="display:none; margin-top:16px; text-align:center;">
+  <form id="forgot-form" style="display:inline-block;">
+    <input type="email" id="forgot-email" placeholder="Nhập email đã đăng ký" required>
+    <button type="submit">Gửi email lấy lại mật khẩu</button>
+    <p id="forgot-message" style="margin-top:8px;"></p>
+  </form>
+</div>
+    <script type="module">
+        import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.43.2/+esm";
+    
+        const supabase = createClient(
+          "https://yjjlpjnifvyxewrepnfk.supabase.co",  
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlqamxwam5pZnZ5eGV3cmVwbmZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg2NzMxMzUsImV4cCI6MjA2NDI0OTEzNX0.W9I4r-uDpAJj2jtctfzEqy6Uf3eifR11rXjX15see0w"                         // Thay bằng Anon Public Key
+        );
+
+       
+  document.getElementById("forgot-link").onclick = function(e) {
+  e.preventDefault();
+  document.getElementById("forgot-form-container").style.display = "block";
+};
+
+// Xử lý gửi email quên tài khoản
+document.getElementById("forgot-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const email = document.getElementById("forgot-email").value.trim();
+  const msg = document.getElementById("forgot-message");
+  msg.textContent = "";
+
+  if (!email) {
+    msg.textContent = "Vui lòng nhập email đã đăng ký!";
+    msg.style.color = "red";
+    return;
+  }
+
+  const redirectTo = window.location.origin + "/doimatkhau.html";
+  // Thử gửi email đổi mật khẩu trước
+  let { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: redirectTo
+  });
+
+  if (!error) {
+    msg.textContent = "Đã gửi email đổi mật khẩu. Vui lòng kiểm tra hộp thư!";
+    msg.style.color = "green";
+    return;
+  }
+
+  // Nếu lỗi là "User not found", tiến hành đăng ký mới
+  if (error.message && error.message.toLowerCase().includes("user not found")) {
+    // Đăng ký email mới vào Auth với mật khẩu tạm thời
+    const { error: signupError } = await supabase.auth.signUp({
+      email: email,
+      password: Math.random().toString(36).slice(-8) // Mật khẩu tạm thời
+    });
+    if (signupError) {
+      msg.textContent = "Không thể đăng ký email này: " + signupError.message;
+      msg.style.color = "red";
+      return;
+    }
+    msg.textContent = "Email chưa có tài khoản. Đã gửi email xác nhận đăng ký. Vui lòng kiểm tra hộp thư!";
+    msg.style.color = "green";
+    return;
+  } else {
+    msg.textContent = "Gửi email thất bại: " + error.message;
+    msg.style.color = "red";
+  }
+});
+
+// Xử lý đăng nhập bằng tên đăng nhập
+ document.getElementById("forgot-link").onclick = function(e) {
+      e.preventDefault();
+      document.getElementById("forgot-form-container").style.display = "block";
+    };
+
+    // Xử lý kiểm tra email quên tài khoản
+    document.getElementById("forgot-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("forgot-email").value.trim();
+      const msg = document.getElementById("forgot-message");
+      msg.textContent = "";
+
+      if (!email) {
+        msg.textContent = "Vui lòng nhập email đã đăng ký!";
+        msg.style.color = "red";
+        return;
+      }
+
+      // Kiểm tra email trong bảng Dangky
+      const { data, error } = await supabase
+        .from("Dangky")
+        .select("tendangnhap")
+        .eq("email", email)
+        .single();
+
+      if (data && data.tendangnhap) {
+        msg.textContent = "Tên đăng nhập của bạn là: " + data.tendangnhap;
+        msg.style.color = "green";
+      } else {
+        msg.textContent = "Không tìm thấy tài khoản với email này!";
+        msg.style.color = "red";
+      }
+    });
+
+    // Xử lý đăng nhập bằng tên đăng nhập và mật khẩu (KHÔNG liên quan email/gmail)
+    document.getElementById("dangnhap").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const tendangnhap = document.getElementById("tendangnhap").value.trim();
+      const matkhau = document.getElementById("password").value;
+      const errorMsg = document.getElementById("errorMsg");
+      errorMsg.textContent = "";
+
+      // Kiểm tra trong bảng Dangky
+      const { data, error } = await supabase
+        .from("Dangky")
+        .select("id")
+        .eq("tendangnhap", tendangnhap)
+        .eq("matkhau", matkhau)
+        .single();
+
+      if (!data) {
+        errorMsg.textContent = "Tên đăng nhập hoặc mật khẩu không đúng!";
+        return;
+      }
+
+      // Đăng nhập thành công
+      localStorage.setItem('trangcanhan', data.id);
+      window.location.href = "trangcanhan.html";
+    });
+      </script>
+</body>
+</html>

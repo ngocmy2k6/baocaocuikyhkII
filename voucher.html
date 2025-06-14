@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voucher</title>
+  <link rel="stylesheet" href="trangcanhan.css">
+  <style>
+    .voucher-box {
+      background: rgba(255,255,255,0.95);
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      max-width: 420px;
+      margin: 60px auto;
+      padding: 40px 30px;
+      text-align: center;
+    }
+    .voucher-box h2 {
+      margin-bottom: 18px;
+      color: #bfa14a;
+    }
+    .voucher-box p {
+      font-size: 1.1rem;
+      color: #444;
+    }
+  </style>
+</head>
+<body>
+
+    <video src="Classic Jewelry Animation for AGAPE Diamonds Part2.mp4" alt="Back-end" style="position:fixed;top:0;left:0;width:100vw;height:100vh;object-fit:cover;z-index:-1;" autoplay muted loop></video>
+  <div class="account-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <h3>Xin chào, Quế Thơ</h3>
+      <h3><a href="index.html" style="user-select: none; text-decoration: none; color:black">Home</a></h3>
+      <ul class="menu">
+        <li><a href="trangcanhan.html">Hồ sơ</a></li>
+        <li><a href="doimatkhau.html">Đổi mật khẩu</a></li>
+        <li><a href="donhang.html">Đơn hàng của tôi</a></li>
+        <li><a href="danhgiasanpham.html">Đánh giá sản phẩm</a></li>
+        <li class="active">Voucher</li>
+        <li><a href="trungtamhotro.html">Trung tâm hỗ trợ</a></li>
+<li><a href="#" id="logout-btn">Đăng xuất</a></li>      </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="content">
+      <div class="voucher-box">
+        <h2>Voucher</h2>
+        <p>Hiện tại bạn chưa có voucher nào.</p>
+        <p>Chúng tôi sẽ thông báo cho bạn khi có voucher mới!</p>
+      </div>
+    </main>
+  </div>
+  <script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.43.2/+esm'
+
+const supabase = createClient(
+  'https://yjjlpjnifvyxewrepnfk.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlqamxwam5pZnZ5eGV3cmVwbmZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg2NzMxMzUsImV4cCI6MjA2NDI0OTEzNX0.W9I4r-uDpAJj2jtctfzEqy6Uf3eifR11rXjX15see0w'
+);
+
+async function loadProfile() {
+  const userId = localStorage.getItem('trangcanhan');
+  console.log('userId:', userId);
+
+  if (userId) {
+    const { data, error } = await supabase
+      .from('Dangky')
+      .select('tendangnhap, email')
+      .eq('id', userId)
+      .single();
+
+    console.log('data:', data, 'error:', error);
+
+    if (data && data.tendangnhap) {
+      document.querySelector('.sidebar h3').textContent = 'Xin chào, ' + data.tendangnhap;
+      const emailInput = document.querySelector('input[type="email"]');
+      if (emailInput) emailInput.value = data.email || '';
+    }
+  }
+}
+
+loadProfile(); // đừng quên gọi hàm
+</script>
+  <script src="logout.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trung tâm hỗ trợ</title>
+  <link rel="stylesheet" href="trangcanhan.css">
+</head>
+<body>
+ 
+    <!-- Sidebar -->
+  <video src="Classic Jewelry Animation for AGAPE Diamonds Part2.mp4" alt="Back-end" style="position:fixed;top:0;left:0;width:100vw;height:100vh;object-fit:cover;z-index:-1;" autoplay muted loop></video>
+  <div class="account-container">
+    <aside class="sidebar">
+      <h3>Xin chào, Quế Thơ</h3>
+      <h3><a href="index.html" style="user-select: none; text-decoration: none; color:black">Home</a></h3>
+      <ul class="menu">
+        <li><a href="trangcanhan.html">Hồ sơ</a></li>
+        <li><a href="doimatkhau.html">Đổi mật khẩu</a></li>
+        <li><a href="donhang.html">Đơn hàng của tôi</a></li>
+        <li><a href="danhgiasanpham.html">Đánh giá sản phẩm</a></li>
+        <li><a href="voucher.html">Voucher</a></li>
+        <li class="active">Trung tâm hỗ trợ</li>
+        <li><a href="#" id="logout-btn">Đăng xuất</a></li>
+      </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="content">
+      <h2>Trung tâm hỗ trợ</h2>
+      <div class="support-box">
+        <form class="form-section">
+          <label>Chủ đề hỗ trợ <span>*</span>
+            <select required>
+              <option value="">Chọn chủ đề</option>
+              <option>Vấn đề tài khoản</option>
+              <option>Đơn hàng & giao hàng</option>
+              <option>Thanh toán</option>
+              <option>Khác</option>
+            </select>
+          </label>
+          <label>Email liên hệ <span>*</span>
+            <input type="email" placeholder="Nhập email của bạn" required>
+          </label>
+          <label>Nội dung cần hỗ trợ <span>*</span>
+            <textarea rows="5" placeholder="Nhập nội dung cần hỗ trợ" required></textarea>
+          </label>
+          <button type="submit" class="btn-save">Gửi yêu cầu</button>
+        </form>
+        <div style="margin-top:20px;">
+          <strong>Hoặc liên hệ:</strong><br>
+          Email: quetho1906@gmail.com <br>
+          SĐT: 0977 605 472<br>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="logout.js"></script>
+</body>
+</html>
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.43.2/+esm'
+
+const supabase = createClient(
+  'https://yjjlpjnifvyxewrepnfk.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlqamxwam5pZnZ5eGV3cmVwbmZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg2NzMxMzUsImV4cCI6MjA2NDI0OTEzNX0.W9I4r-uDpAJj2jtctfzEqy6Uf3eifR11rXjX15see0w'
+);
+
+async function loadProfile() {
+  const userId = localStorage.getItem('trangcanhan');
+  console.log('userId:', userId);
+
+  if (userId) {
+    const { data, error } = await supabase
+      .from('Dangky')
+      .select('tendangnhap, email')
+      .eq('id', userId)
+      .single();
+
+    console.log('data:', data, 'error:', error);
+
+    if (data && data.tendangnhap) {
+      document.querySelector('.sidebar h3').textContent = 'Xin chào, ' + data.tendangnhap;
+      const emailInput = document.querySelector('input[type="email"]');
+      if (emailInput) emailInput.value = data.email || '';
+    }
+  }
+}
+
+loadProfile(); // đừng quên gọi hàm
+</script>
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.43.2/+esm'
+
+const supabase1 = createClient(
+  'https://yjjlpjnifvyxewrepnfk.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlqamxwam5pZnZ5eGV3cmVwbmZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg2NzMxMzUsImV4cCI6MjA2NDI0OTEzNX0.W9I4r-uDpAJj2jtctfzEqy6Uf3eifR11rXjX15see0w'
+);
+
+async function loadProfile() {
+  const userId = localStorage.getItem('trangcanhan');
+  console.log('userId:', userId);
+
+  if (userId) {
+    const { data, error } = await supabase1
+      .from('Dangky')
+      .select('tendangnhap, email')
+      .eq('id', userId)
+      .single();
+
+    console.log('data:', data, 'error:', error);
+
+    if (data && data.tendangnhap) {
+      document.querySelector('.sidebar h3').textContent = 'Xin chào, ' + data.tendangnhap;
+      const emailInput = document.querySelector('input[type="email"]');
+      if (emailInput) emailInput.value = data.email || '';
+    }
+  }
+}
+
+loadProfile(); // đừng quên gọi hàm
+</script>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css" >
+<style>
+.card {
+  display: flex;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  max-width: auto;
+  margin: 40px auto;
+  
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.left-side {
+  display: flex;
+  width: 50%;
+  background-color: #f9f9f9;
+}
+
+.thumbnail-list {
+  width: 25%;
+  max-height: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px 5px;
+  background-color: #eee;
+}
+
+.thumbnail-list img {
+  width: 100%;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.thumbnail-list img:hover {
+  transform: scale(1.05);
+}
+
+.main-image {
+  width: 75%;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.main-image img {
+  width: 100%;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.card-content {
+  padding: 20px;
+  width: 50%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: top;
+}
+
+.card-content h1 {
+  margin-top: 0;
+}
+
+.price {
+  color: grey;
+  font-size: 24px;
+  margin: 10px 0;
+}
+
+.card-content button {
+  border: none;
+  outline: 0;
+  padding: 12px;
+  color: white;
+  background-color: #000;
+  text-align: center;
+  cursor: pointer;
+  font-size: 18px;
+  width: 100%;
+  margin-top: 20px;
+  border-radius: 5px;
+}
+
+.card-content button:hover {
+  opacity: 0.7;
+}
+.cart-icon {
+      position: absolute;
+      right: 20px;
+      top: 20px;
+      cursor: pointer;
+      font-size: 18px;
+     color: #eee;
+    }
+    .cart-count {
+      background: white;
+      color: #ff4081;
+      padding: 2px 6px;
+      border-radius: 50%;
+      font-size: 12px;
+      margin-left: 5px;
+    }
+</style>
+</head>
+<body>
+  
+    <div class="cart-icon" onclick="toggleCart()">
+      <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        fill-rule="evenodd"
+        clip-rule="evenodd"
+        d="M5.79166 2H1V4H4.2184L6.9872 16.6776H7V17H20V16.7519L22.1932 7.09095L22.5308 6H6.6552L6.08485 3.38852L5.79166 2ZM19.9869 8H7.092L8.62081 15H18.3978L19.9869 8Z"
+        fill="currentColor"
+      />
+      <path
+        d="M10 22C11.1046 22 12 21.1046 12 20C12 18.8954 11.1046 18 10 18C8.89543 18 8 18.8954 8 20C8 21.1046 8.89543 22 10 22Z"
+        fill="currentColor"
+      />
+      <path
+        d="M19 20C19 21.1046 18.1046 22 17 22C15.8954 22 15 21.1046 15 20C15 18.8954 15.8954 18 17 18C18.1046 18 19 18.8954 19 20Z"
+        fill="currentColor"
+      />
+    </svg> Cart <span class="cart-count" id="cart-count">0</span>
+          </div>
+    <nav style="background-color: #000" class="nav" >
+      <a href="index.html"><img src="Screenshot (2).png" alt="Logo" height="50"></a> 
+    </nav>
+<div class="card">
+  <div class="left-side">
+    <div class="thumbnail-list">
+      <img src="Ring/a1.jpg" onclick="changeImage(this.src)" alt="Thumb 1">
+      <img src="Ring/a2.jpg" onclick="changeImage(this.src)" alt="Thumb 2">
+      <img src="Ring/a3.jpg" onclick="changeImage(this.src)" alt="Thumb 3">
+      <img src="Ring/a4.jpg" onclick="changeImage(this.src)" alt="Thumb 4">
+    </div>
+    <div class="main-image">
+      <img id="mainDisplay" src="Ring/a1.jpg" alt="Main Product">
+    </div>
+  </div>
+  <div class="card-content">
+    <h1>nhẫn kim cương</h1>
+    <p class="price">30tr/1chiec</p>
+    <p></p>
+    <button onclick="addToCart()" >Add to Cart</button>
+  </div>
+</div>
+
+<script>
+function changeImage(src) {
+  document.getElementById("mainDisplay").src = src;
+}
+</script>
+<script>
+    let cartCount = 0;
+    
+    function addToCart() {
+      cartCount++;
+      document.getElementById("cart-count").textContent = cartCount;
+    }
+    </script>
+
+</body>
+</html>
